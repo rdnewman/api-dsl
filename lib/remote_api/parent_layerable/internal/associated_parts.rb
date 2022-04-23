@@ -96,7 +96,8 @@ module RemoteAPI
           # Tracks what class names have been inferred
           #
           # @param reference_symbol [Symbol|String] name for inferring associated class
-          # @return [nil]
+          # @raise [RemoteAPIConfigurationError] when reference_symbol is not a String or Symbol
+          # @return [true]
           def register(reference_symbol)
             unless reference_symbol.is_a?(Symbol) || reference_symbol.is_a?(String)
               raise RemoteAPIConfigurationError
@@ -110,7 +111,7 @@ module RemoteAPI
 
             @parts.update({ reference_symbol.to_sym => klass })
 
-            nil
+            true
           end
 
           # Returns new readonly Hash of inferred associated classes
