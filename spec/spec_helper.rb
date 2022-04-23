@@ -3,29 +3,12 @@ Bundler.setup
 
 require 'simplecov'
 SimpleCov.start do
-  # formatter = SimpleCov::Formatter::MultiFormatter.new(
-  #   [
-  #     SimpleCov::Formatter::HTMLFormatter
-  #   ]
-  # )
-  # minimum_coverage 90 # must be at least 90%
+  minimum_coverage 90 # must be at least 90%
   add_filter '/spec/' # ignore spec files
 end
 
 Dir.glob('**/*.rb'.freeze, base: 'lib').sort.each { |f| require f }
 
-# Dir.glob('**/*.rb'.freeze, base: 'lever').sort.each do |f|
-# p f
-#   require_relative f
-# end
-# puts 'about to load'
-# Dir.glob('**/*.rb'.freeze, base: '~/src/api-dsl').sort.each do |file|
-# puts file
-#   require_relative file
-# end
-# puts 'loaded'
-
-# require_relative '../remote_api'
 # require_relative '../lever'
 
 RSpec.configure do |config|

@@ -1,5 +1,10 @@
-.yardoc/
-coverage/
-doc/
-tmp/
+.archive/
+
+# testing artifacts
 spec/examples.txt
+coverage/
+tmp/
+
+# documentation artifacts
+.yardoc/
+doc/

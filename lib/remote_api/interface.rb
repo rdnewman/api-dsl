@@ -1,22 +1,20 @@
 require_relative './parent_layerable/parent_layerable'
 
 module RemoteAPI
+  # Root level for a given API at a common remote URL
   module Interface
     # Base class for quickly defining an API interface of resource endpoints
     class Base
       include ParentLayerable
 
-      class << self
-        def inherited(subclass)
-          super
-          children_as(:resource)
-        end
+      # @!macro [attach] resource
+      #   @macro compose $0
+      comprised_of :resources
 
-        def resource(klass_symbol)
-          add_child(klass_symbol)
-        end
-      end
-
+      # Provides connection to remote API for an endpoint
+      #
+      # @param endpoint_url [String] part of URL specific to an endpoint
+      # @return [Excon::Connection]
       def connection(endpoint_url)
         url = "#{base_url}#{endpoint_url}"
         Excon.new(url, user: key) # TODO: how solve authentication more generally?

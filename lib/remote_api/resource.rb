@@ -1,21 +1,16 @@
 require_relative './parent_layerable/parent_layerable'
 
 module RemoteAPI
+  # Logically groups API endpoints together for a common resource
+  # (e.g., endpoints for working with a user)
   module Resource
     # Base class for quickly defining API resources of endpoints
     class Base
       include ParentLayerable
 
-      class << self
-        def inherited(subclass)
-          super
-          children_as(:endpoint)
-        end
-
-        def endpoint(klass_symbol)
-          add_child(klass_symbol)
-        end
-      end
+      # @!macro [attach] endpoint
+      #   @macro compose $0
+      comprised_of :endpoints
     end
   end
 end

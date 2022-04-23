@@ -1,6 +1,3 @@
-require 'dry/inflector'
-require 'loba'
-
 require_relative 'remote_api/interface'
 require_relative 'remote_api/resource'
 require_relative 'remote_api/endpoint'
@@ -11,5 +8,6 @@ require_relative 'remote_api/error'
 # require_relative 'lever'
 
 module RemoteAPI
+  # current version of gem
   VERSION = '0.0.1'.freeze
 end

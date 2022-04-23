@@ -1,4 +1,5 @@
 module RemoteAPI
+  # Single endpoint of a remote API
   module Endpoint
     # Base class for quickly defining API resource endpoints
     class Base

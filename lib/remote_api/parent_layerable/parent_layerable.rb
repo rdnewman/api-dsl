@@ -3,6 +3,7 @@ require_relative './../error'
 
 module RemoteAPI
   # Supports layering for object composition in DSL
+  # @api private
   module ParentLayerable
     def self.included(base)
       base.extend ClassMethods
@@ -10,44 +11,46 @@ module RemoteAPI
 
     # Class methods for extension
     module ClassMethods
-      def inherited(subclass)
-        @parent_layerable_class = subclass
-        super
-      end
-
-      def children_as(child_type_symbol)
-        unless child_type_symbol.is_a?(Symbol) || child_type_symbol.is_a?(String)
+      # Specify associated names for inferring composed classes to support DSL schema
+      #
+      # @example To allow the DSL of +resource: somename+ in the inherited class, specify
+      #   comprised_of :resources
+      #
+      # @param associated_type [Symbol|String] type of composed class that may be specified by DSL
+      # @return [nil]
+      # @!macro new compose
+      #   @!method $1(klass_symbol)
+      #     Specifies that the given klass_symbol refers to $1 class
+      # #     @param associated_type [Symbol]
+      #     @return [nil]
+      #   @!method $1
+      #     List all $1
+      #     @return [Hash]
+      def comprised_of(associated_type)
+        unless associated_type.is_a?(Symbol) || associated_type.is_a?(String)
           raise RemoteAPIConfigurationError
         end
 
-        # Define the collection of children
-        collection = Internal::Children.new(suffix: child_type_symbol.to_s)
+        singular = Internal.inflector.singularize(associated_type)
+        plural = Internal.inflector.pluralize(associated_type)
 
-        # DSL for defining specific children
-        define_method(child_type_symbol) { |klass_symbol| add_child(klass_symbol) }
+        # Define the collection of associated part classes to be composed
+        collection = Internal::AssociatedParts.new(suffix: singular)
 
-        # DSL for retrieving any child or working with the children
-        method_name = Internal::Children.inflector.pluralize(child_type_symbol)
-        define_method(method_name) { collection }
+        # DSL for composing associated classes
+        #
+        define_singleton_method(singular) do |klass_symbol|
+          collection.register(klass_symbol) || (raise RemoteAPIConfigurationError)
 
-        # Record the container object into the subject class
-        @parent_layerable_class.instance_variable_set(:@children, collection)
-      end
+          define_method(klass_symbol) { collection[klass_symbol] }
 
-      def add_child(reference_symbol)
-        raise RemoteAPIConfigurationError unless children?
+          nil
+        end
 
-        children.register(reference_symbol)
+        # DSL for retrieving any associate class or working with the set
+        define_method(plural) { collection.to_h }
 
-        define_method(reference_symbol) { self.class.children[reference_symbol] }
-      end
-
-      def children
-        @children ||= @parent_layerable_class.instance_variable_get(:@children)
-      end
-
-      def children?
-        !children.nil?
+        nil
       end
     end
   end
