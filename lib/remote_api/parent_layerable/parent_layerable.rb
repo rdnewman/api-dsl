@@ -17,6 +17,7 @@ module RemoteAPI
       #   comprised_of :resources
       #
       # @param associated_type [Symbol|String] type of composed class that may be specified by DSL
+      # @raise [RemoteAPIConfigurationError] when associated_type is not a String or Symbol
       # @return [nil]
       # @!macro new compose
       #   @!method $1(klass_symbol)
